@@ -9,6 +9,7 @@ let congo = document.getElementsByClassName("congo");
 let guessed = false;
 let button = document.getElementsByTagName("button");
 let themelight = false;
+let fetching = false;
 function getRandomIntInclusive(min, max) {
   const minCeiled = Math.ceil(min);
   const maxFloored = Math.floor(max);
@@ -71,6 +72,7 @@ function blacktheme() {
   themelight = false;
 }
 async function checkWord(word) {
+  fetching = true;
   try {
     const response = await fetch(
       `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
@@ -82,6 +84,9 @@ async function checkWord(word) {
     }
   } catch (error) {
     console.error("Error connecting to dictionary");
+  }
+  finally{
+    fetching = false;
   }
 }
 async function displayletter(event) {
@@ -101,6 +106,7 @@ async function displayletter(event) {
     if (event.key === "Enter") {
       event.preventDefault();
       if (boxcount === 5) {
+        if(fetching==true) return;
         await checkWord(inputWord);
         if (validWord == true) {
           currrow.classList.add("rowAnimation");
@@ -171,3 +177,4 @@ function reloadpage() {
 window.addEventListener("keydown", displayletter);
 button[1].addEventListener("click", changetheme);
 button[0].addEventListener("click", reloadpage);
+
